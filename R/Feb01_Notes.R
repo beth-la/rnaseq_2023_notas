@@ -94,3 +94,27 @@ rse[, c("A", "D", "F")]
 
 ## MAS LIBRERIAS IMPORTANTES:
 
+# ISEE
+#     Genera paginas wed
+#     Contiene varias opciones que permite observar tus datos, en el caso del
+#     ejemplo anterior con el objeto (rse) que contiene genes, podemos observar la
+#     informacion de  un gen en especifico, permitiendo seleccionarlo de una manera
+#     mas interactiva y visual.
+#     Muestra heatmaps.
+#     Permite descargar paneles de las imagenes generadas.
+#     Ej. Explora el objeto rse de forma interactiva.
+library("iSEE")
+iSEE::iSEE(rse)
+
+# SingleCellExperiment
+#   Expande informacion de SummarizedExperiment, resume la informacion.
+
+# Ejercicio: Descargar datos de un objeto SingleCellExperiment.
+## Descarguemos unos datos de spatialLIBD
+sce_layer <- spatialLIBD::fetch_data("sce_layer")
+
+## Revisemos el tamaño de este objeto
+lobstr::obj_size(sce_layer) / 1024^2 ## Convertir a MB
+
+# Revisando objeto con ISEE y generando imagenes.
+iSEE::iSEE(sce_layer)
