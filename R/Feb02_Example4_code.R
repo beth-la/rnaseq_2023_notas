@@ -1,4 +1,4 @@
-## EJEMPLO 4 visto en clase 
+## EJEMPLO 4 visto en clase
 
 library("recount3")
 
@@ -39,7 +39,7 @@ summary(as.data.frame(colData(rse_gene_SRP045638)[
 ]))
 
 ## Encontraremos diferencias entre muestra prenatalas vs postnatales
-# Prenatal y postnatal 
+# Prenatal y postnatal
 rse_gene_SRP045638$prenatal <- factor(ifelse(rse_gene_SRP045638$sra_attribute.age < 0, "prenatal", "postnatal"))
 table(rse_gene_SRP045638$prenatal)
 
@@ -84,7 +84,7 @@ dge <- DGEList(
 )
 dge <- calcNormFactors(dge)
 
-# EXPRESION DIFERENCIAL 
+# EXPRESION DIFERENCIAL
 
 library("ggplot2")
 ggplot(as.data.frame(colData(rse_gene_SRP045638)), aes(y = assigned_gene_prop, x = prenatal)) +
@@ -113,10 +113,10 @@ de_results <- topTable(
 )
 dim(de_results)
 
-# Notas: 
-##    Si edad era mayor o igual a 0 = postnatal 
-##    Si la edad era menor a 0 = prenatal 
-##    Los valores p pequeños determinan los que son pre o post 
+# Notas:
+##    Si edad era mayor o igual a 0 = postnatal
+##    Si la edad era menor a 0 = prenatal
+##    Los valores p pequeños determinan los que son pre o post
 ##    natal y necesitan ser medidos de una manera más precisa y pueden
 ##    ser usados como biomarcador.
 
@@ -139,3 +139,47 @@ table(de_results$adj.P.Val < 0.05)
 plotMA(eb_results, coef = 2)
 
 volcanoplot(eb_results, coef = 2, highlight = 3, names = de_results$gene_name)
+
+## Visualizando genes DE
+## Extraer valores de los genes de interés
+
+# Con funcion rank obtenemos aquellos que tienen un Pval mayor o igual a 50
+exprs_heatmap <- vGene$E[rank(de_results$adj.P.Val) <= 50, ]
+
+## Creemos una tabla con información de las muestras
+## y con nombres de columnas más amigables
+df <- as.data.frame(colData(rse_gene_SRP045638)[, c("prenatal", "sra_attribute.RIN", "sra_attribute.sex")])
+colnames(df) <- c("AgeGroup", "RIN", "Sex")
+
+## Hagamos un heatmap
+## pretty heatmap = pheatmap
+library("pheatmap")
+pheatmap(
+  exprs_heatmap,
+  cluster_rows = TRUE,
+  cluster_cols = TRUE,
+  show_rownames = FALSE,
+  show_colnames = FALSE,
+  annotation_col = df
+)
+
+## Para colores
+library("RColorBrewer")
+
+## Conviertiendo los grupos de edad a colores
+col.group <- df$AgeGroup
+levels(col.group) <- brewer.pal(nlevels(col.group), "Set1")
+
+col.group <- as.character(col.group)
+
+## MDS por grupos de edad
+plotMDS(vGene$E, labels = df$AgeGroup, col = col.group)
+
+## Conviertiendo los valores de Sex a colores
+col.sex <- df$Sex
+levels(col.sex) <- brewer.pal(nlevels(col.sex), "Dark2")
+
+col.sex <- as.character(col.sex)
+
+## MDS por sexo
+plotMDS(vGene$E, labels = df$Sex, col = col.sex)
