@@ -64,10 +64,3 @@ colData(rse_gene_SRP009615)[
 # Observamos lo obtenido con iSEE y generamos una grafica.
 library("iSEE")
 iSEE::iSEE(rse_gene_SRP009615)
-
-# Haciendo una comparación entre Assigned gene y mitoRate
-
-m1 <- matrix(1:2, ncol = 2)
-layout(m1)
-boxplot(with(colData(rse_gene), tapply(totalAssignedGene, PrimaryDx, summary)), main= "AssignedGene",col = rainbow(10))
-boxplot(with(colData(rse_gene), tapply(mitoRate, PrimaryDx, summary)), main= "mitoRate",col = rainbow(10))
