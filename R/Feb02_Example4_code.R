@@ -136,7 +136,7 @@ head(de_results)
 table(de_results$adj.P.Val < 0.05)
 
 ## Visualicemos los resultados estadísticos
-plotMA(eb_results, coef = 2)
+limma::plotMA(eb_results, coef = 2)
 
 volcanoplot(eb_results, coef = 2, highlight = 3, names = de_results$gene_name)
 
@@ -169,7 +169,7 @@ library("RColorBrewer")
 ## Conviertiendo los grupos de edad a colores
 col.group <- df$AgeGroup
 levels(col.group) <- brewer.pal(nlevels(col.group), "Set1")
-
+#http://127.0.0.1:44799/graphics/3e0af8b1-88c3-469b-beae-5027acedfca4.png
 col.group <- as.character(col.group)
 
 ## MDS por grupos de edad
@@ -183,3 +183,41 @@ col.sex <- as.character(col.sex)
 
 ## MDS por sexo
 plotMDS(vGene$E, labels = df$Sex, col = col.sex)
+
+match(row.names(exprs_heatmap),de_results$gene_id)
+
+
+# Mostrando los nombres de los genes en heatmap: Ejercicio.
+gene_names <- sapply(row.names(exprs_heatmap), function(n){
+  index <- match(n,de_results$gene_id)
+  return(de_results$gene_name[index])
+})
+gene_names
+
+# Asegurarnos de que se obtuvieron los nombres correctamente:
+length(gene_names) == length(row.names(exprs_heatmap))
+
+row.names(exprs_heatmap) <- gene_names
+row.names(exprs_heatmap)
+
+library("pheatmap")
+pheatmap(
+  exprs_heatmap,
+  cluster_rows = TRUE,
+  cluster_cols = TRUE,
+  show_rownames = TRUE,
+  show_colnames = FALSE,
+  annotation_col = df
+)
+
+# Comprobando que el codigo si hace lo que queremos:
+# > length(gene_names) == length(row.names(exprs_heatmap))
+# [1] TRUE
+# > row.names(exprs_heatmap)[1]
+# [1] "ENSG00000004487.15"
+# > match(row.names(exprs_heatmap)[1],de_results$gene_id)
+# [1] 598
+# > de_results$gene_id[598]
+# [1] "ENSG00000004487.15"
+# > de_results$gene_name[598]
+#[1] "KDM1A"
