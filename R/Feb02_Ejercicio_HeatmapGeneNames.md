@@ -2,6 +2,8 @@
 
 Cambiar los nombres de las rows del heatmap de modo que ahora muestre los nombres de los genes y no los ID
 
+## Mi respuesta 
+
 ```R
 # Generamos una funcion con lappy que nos permita buscar el nomre del gene segunel ID que se encuentra asociado a este. 
 gene_names <- unlist(lapply(row.names(exprs_heatmap), function(id){
@@ -40,3 +42,22 @@ pheatmap(
 ```
 
 ![image-20230203092007565](C:\Users\Brenda Elizabeth L\AppData\Roaming\Typora\typora-user-images\image-20230203092007565.png)
+
+## Respuesta vista en clase
+
+```R
+## Guardemos los IDs de nuestros 50 genes
+nombres_originales <- rownames(exprs_heatmap)
+
+## Con match() podemos encontrar cual es cual
+rownames(exprs_heatmap) <- rowRanges(rse_gene_SRP045638)$gene_name[
+    match(rownames(exprs_heatmap), rowRanges(rse_gene_SRP045638)$gene_id)
+]
+
+## Vean que tambien podriamos haber usado rank()
+identical(
+    which(rank(de_results$adj.P.Val) <= 50),
+    match(nombres_originales, rowRanges(rse_gene_SRP045638)$gene_id)
+)
+```
+
