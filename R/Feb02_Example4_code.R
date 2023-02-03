@@ -221,3 +221,27 @@ pheatmap(
 # [1] "ENSG00000004487.15"
 # > de_results$gene_name[598]
 #[1] "KDM1A"
+
+# HEAT MAPS
+
+## Versión con centering y scaling en los renglones (los genes)
+pheatmap::pheatmap(
+  exprs_heatmap,
+  cluster_rows = TRUE,
+  cluster_cols = TRUE,
+  show_rownames = TRUE,
+  show_colnames = FALSE,
+  annotation_col = df,
+  scale = "row"
+)
+
+## Misma versión pero ahora con ComplexHeatmap en vez del paquete pheatmap
+ComplexHeatmap::pheatmap(
+  exprs_heatmap,
+  cluster_rows = TRUE,
+  cluster_cols = TRUE,
+  show_rownames = TRUE,
+  show_colnames = FALSE,
+  annotation_col = df,
+  scale = "row"
+)
